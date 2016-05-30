@@ -1,0 +1,39 @@
+#!/bin/sh -efu
+
+# convert eps+tex into full eps
+
+name=${1%.tex}
+
+cat > tmp_fig.tex << EOF
+\documentclass[a4paper]{article}
+\usepackage{amssymb}
+\usepackage{euscript}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{epsfig}
+\usepackage{fullpage}
+\pagestyle{empty}
+
+\begin{document}
+\begin{figure}[p]\input{$name.tex}\end{figure}%
+\end{document}
+EOF
+
+latex tmp_fig
+dvips -E tmp_fig -o full_${name}.eps
+
+bb=$(gs -dNOPAUSE -dBATCH -q -sDEVICE=bbox full_${name}.eps 2>&1 | head -n1)
+bb=${bb#*: }
+x=''
+y=''
+for i in $bb; do
+  [ -z $x ] && x=$i || y=$i
+  [ -z $y ] || break
+done
+echo ">>> $x $y"
+
+dvips -E tmp_fig -O -${x}pt,${y}pt -o full_${name}.eps
+
+
+
+rm -f tmp_fig.*
