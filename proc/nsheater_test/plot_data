@@ -1,0 +1,6 @@
+#!/usr/bin/gnuplot
+
+
+plot "data/t_mixer.txt" using 1:2 with lines,\
+     "data/t_ns.txt" using 1:2 with lines
+pause -1

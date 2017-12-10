@@ -1,0 +1,29 @@
+#!/usr/bin/tclsh
+
+# NS heater is connected to  lockin0:2 and mult1
+# Data is written to heaters.txt
+
+package require DeviceRole
+
+set ns_h [DeviceRole lockin0:2 dc_source ]
+set ns_m [DeviceRole mult1:DCV gauge ]
+
+# one argument: NS heater voltage
+set vns [lindex $argv 0]
+
+$ns_h set_volt $vns
+
+after 500
+# measure real values:
+set vnsm [$ns_m get]
+
+
+set tt [clock seconds]
+set tu [clock format $tt -format "%y-%m-%d %T"]
+
+puts "$tu  $vns $vnsm"
+
+set ff [open "heaters.txt" "a"]
+puts $ff "$tu  $vns $vnsm"
+close $ff
+
