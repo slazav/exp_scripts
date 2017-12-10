@@ -128,7 +128,7 @@ function a = avr(t,v, t1,t2, del, pl)
   a = mean(v(jj));
   if pl;
     plot(pl, t(ii)-t(1), v(ii));
-    plot(pl, [t(ii(1)) t(ii(end))]-t(1), [a a], 'k-')
+    plot(pl, [t(jj(1)) t(jj(end))]-t(1), [a a], 'k-')
   end;
 end
 

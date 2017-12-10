@@ -1,7 +1,7 @@
 #!/usr/bin/tclsh
 
 # Still heater is connected to  lockin0:1 and mult0
-# Mix heater is connected to  lockin0:1 and mult0
+# Mix heater is connected to  lockin0:2 and mult1
 # Data is written to heaters.txt
 
 package require DeviceRole
