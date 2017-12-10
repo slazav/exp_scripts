@@ -1,0 +1,14 @@
+d1=$(date -d "2017-12-09 19:57:52" +%s)
+d2=$(date -d "2017-12-10 15:24:10" +%s)
+
+mkdir -p data
+graphene get_range drydemag/flow $d1 $d2 > data/flow.txt
+graphene get_range drydemag/CH5T $d1 $d2 > data/t_still.txt
+graphene get_range drydemag/CH6T $d1 $d2 > data/t_mixer.txt
+graphene get_range drydemag/gauge:1 $d1 $d2 > data/p_still.txt
+graphene get_range drydemag/gauge:2 $d1 $d2 > data/p_return.txt
+
+graphene get_range drydemag/temp $d1 $d2 > data/t_ns.txt
+
+
+

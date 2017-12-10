@@ -1,0 +1,33 @@
+#!/usr/bin/tclsh
+
+# Still heater is connected to  lockin0:1 and mult0
+# Mix heater is connected to  lockin0:1 and mult0
+# Data is written to heaters.txt
+
+package require DeviceRole
+
+set still_h [DeviceRole lockin0:1 dc_source ]
+set mixer_h [DeviceRole lockin0:2 dc_source ]
+set still_m [DeviceRole mult0:DCV gauge ]
+set mixer_m [DeviceRole mult1:DCV gauge ]
+
+# two arguments: still heater voltage, mixer heater voltage
+set vs [lindex $argv 0]
+set vm [lindex $argv 1]
+
+$still_h set_volt $vs
+$mixer_h set_volt $vm
+
+after 500
+# measure real values:
+set vsm [$still_m get]
+set vmm [$mixer_m get]
+
+set tt [clock seconds]
+set tu [clock format $tt -format "%y-%m-%d %T"]
+
+set ff [open "heaters.txt" "a"]
+puts $ff "$tu  $vs $vm  $vsm $vmm"
+puts     "$tu  $vs $vm  $vsm $vmm"
+close $ff
+

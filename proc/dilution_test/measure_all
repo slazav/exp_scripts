@@ -1,0 +1,38 @@
+S=1.2
+
+for M in 0.00 0.05 0.08 0.10 0.12; do
+  ./measure $S $M
+  sleep 3600
+done
+
+S=2.0
+
+for M in 0.12 0.10 0.08 0.05 0.00; do
+  ./measure $S $M
+  sleep 3600
+done
+
+S=1.6
+
+for M in 0.00 0.05 0.08 0.10 0.12; do
+  ./measure $S $M
+  sleep 3600
+done
+
+S=0.5
+
+for M in 0.12 0.10 0.08 0.05 0.00; do
+  ./measure $S $M
+  sleep 4000
+done
+
+S=0.0
+
+for M in 0.00 0.05 0.08 0.10 0.12; do
+  ./measure $S $M
+  sleep 4200
+done
+
+S=1.2
+./measure $S 0
+
