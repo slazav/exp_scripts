@@ -26,6 +26,10 @@ function process_data
   % measured voltages for still, mixer heaters.
   [D T V0S V0M VS VM ] = textread('heaters.txt', '%s %s %f %f %f %f');
 
+  % reaf squid multiplier
+  K = textread('squid_mult.txt', '%f');
+  tns_v = tns_v * K(1);
+
   % time shift (between computers, now should be 0)
   sh=0;
 
