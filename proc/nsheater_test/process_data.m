@@ -1,7 +1,7 @@
 function process_data
 
   % process heaters.txt + data/*
-  % to get information about NS heatleak
+  % to get information about NS heatleak and HS thermal conductance
   % - time range for each test is extracted
   % - tmix, tstill, pstill, preturn are fit with exponent (with some delay in the beginning)
   % - flow fit with constant (with some delay in the beginning)
@@ -11,7 +11,7 @@ function process_data
   pkg load optim
 
   % resistance of heaters:
-  Rns=120;
+  Rns=1230;
 
   % read cruostat data
   [tmixer_t tmixer_v] = textread('data/t_mixer.txt', '%f %f');
@@ -71,7 +71,8 @@ function process_data
 
   p1 = polyfit(QN, dT2', 1);
 
-  xx=0:1:50;
+  xx=[0 max(QN)*1.2];
+
   plot(h(3), QN, dT2, "r*");
   plot(h(3), xx, polyval(p1, xx),    "r-");
   xlabel('Q, uW');
