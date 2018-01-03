@@ -5,6 +5,9 @@
 
 package require DeviceRole
 
+
+
+
 set ns_h [DeviceRole lockin0:2 dc_source ]
 set ns_m [DeviceRole mult1:DCV gauge ]
 

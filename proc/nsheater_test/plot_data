@@ -1,6 +1,31 @@
 #!/usr/bin/gnuplot
 
 
-plot "data/t_mixer.txt" using 1:2 with lines,\
-     "data/t_ns.txt" using 1:2 with lines
+set xlabel "temperature measured with Tmix"
+set ylabel "temperature measured with SQUID"
+
+k=1.1
+
+f1(x) = (x + c1)/k1
+fit f1(x) "data/t_ms" using 2:3 via k1, c1
+
+f2(x) = (x + c2/x)/k2
+fit f2(x) "data/t_ms" using 2:3 via k2, c2
+
+set log x
+set log y
+plot [0.01:2] [0.01:2]\
+ "data/t_ms" using 2:3 with lines,\
+ f1(x) notitle,\
+ x notitle
+
+print "dT = ", c1
+print "k  = ", k1
+
+
 pause -1
+
+
+set terminal png
+set output "cal.png"
+replot
