@@ -2,6 +2,9 @@
 % Get data range t1..t2 from graphene database, return a two-dimentional data array.
 % If cols is a non-elpty array then read only columns specified by cols array (1 means time);
 
+% Function is very slow!
+% Textread is better but one have to be sure that number of colums is not changing
+
 function data = db_get_range(dbname, t1, t2, cols)
   % command prefix (system-specific)
   dbpref="graphene -d /home/exports/DB";

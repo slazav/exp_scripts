@@ -10,5 +10,5 @@ function s=date2unix(d)
   if !isnumeric(d);
     [~, s] = system(['date +%s -d "' d '"']);
     s=str2num(s);
-  else s=d end
+  else s=d; end
 end
