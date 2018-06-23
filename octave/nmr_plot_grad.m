@@ -7,9 +7,10 @@ function nmr_plot_grad(t1, t2)
   [XS,YS] = nmr_fix_drift(TS,IS,XS,YS);
   [XS,YS] = nmr_fix_phase(TS,IS,XS,YS, 1);
 
-  find_figure('nmr_plot_optgrad'); clf; hold on;
+  find_figure('nmr_plot_grad'); clf; hold on;
 
-  gg=[];
+
+ gg=[];
  mm = 0.2;
   for i=1:1:length(TS);
     dy=round(i/2);

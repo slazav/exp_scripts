@@ -9,10 +9,15 @@ function nmr_plot_optgrad(t1, t2, Ispan, Ip, Gp)
 
   find_figure('nmr_plot_optgrad'); clf; hold on;
 
-  plot_frame=(nargin >= 5 length(Ip)==4 && length(Gp)==4);
+  plot_frame=(nargin >= 5 && length(Ip)==4 && length(Gp)==4);
 
   freq = nmr_get_par('freq', T(1))/1000; % freq, kHz
   quad = nmr_get_par('quad', T(1))*1000; % Iquad, mA
+
+  main_meas = 405.886; % main coil, G/A (measured)
+  grad_calc = 31.4270; % grad coil, G/A/cm (calc)
+  cell_height = 0.9;   % cm
+  kgrad = (grad_calc*cell_height)/main_meas;
 
   if plot_frame
     i1a=Ip(1); g1a=Gp(1);
@@ -54,6 +59,12 @@ function nmr_plot_optgrad(t1, t2, Ispan, Ip, Gp)
       plot(ib*[1 1], g+[0, yb], 'b-')
     end
     gg(end+1) = g;
+  end
+
+  if plot_frame
+    k1=-3.5e-3;
+    plot(Iopt + 1e-3*(gg-Gopt)*(k1-kgrad/4), gg, 'r--')
+    plot(Iopt + 1e-3*(gg-Gopt)*(k1+kgrad/4), gg, 'r--')
   end
 
   text(Iopt-Ispan/2.2, min(gg)-0.5, [t1 ' - ' t2 ', f: ' num2str(freq) ' kHz, Iq: ' num2str(quad) ' mA']);

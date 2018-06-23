@@ -25,11 +25,13 @@ function nmr_plot_optquad(t1, t2, Ispan, Ip, Gp)
   plot_height=40;
 
   for i=1:2:length(TS);
-    x = IS{i};
+    t = IS{i};
+    x = plot_height*XS{i}/max(abs(XS{i}));
     y = plot_height*YS{i}/max(abs(YS{i}));
     qs = sprintf(' %3.0f', qq(i));
-    plot(x-im(i), y+qq(i), 'b-');
-    plot([x(1) x(end)]-im(i), qq(i)*[1 1], 'b--');
+    plot(t-im(i), x+qq(i), 'b-');
+    plot(t-im(i), y+qq(i), 'r-');
+    plot([t(1) t(end)]-im(i), qq(i)*[1 1], 'b--');
     text(Ispan/2, qq(i), qs)
   end
 
