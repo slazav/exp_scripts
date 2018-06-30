@@ -15,6 +15,7 @@ function val = nmr_get_par(name, t)
   dbname='';
   if strcmp(name, 'grad'); dbname='drydemag_sweep_grad:0'; end
   if strcmp(name, 'quad'); dbname='drydemag_sweep_quad:0'; end
+  if strcmp(name, 'helm'); dbname='drydemag_sweep_helm:0'; end
   if strcmp(name, 'freq'); dbname='drydemag_nmr_gen:0'; end
   if strcmp(name, 'exc');  dbname='drydemag_nmr_gen:1'; end
   if strcmp(name, 'com');  dbname='drydemag_nmr_gen:3'; end

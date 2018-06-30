@@ -1,47 +1,64 @@
 # plot gradient measurements
 
-function nmr_plot_optquad(t1, t2, Ispan, Ip, Gp)
+function nmr_plot_optquad(t1, t2)
 
-  [T,I,X,Y] = nmr_get_data(t1,t2);
-  [TS,IS,XS,YS] = nmr_get_sweeps(T,I,X,Y);
-  [XS,YS] = nmr_fix_drift_pairs(TS,IS,XS,YS);
-  [XS,YS] = nmr_fix_phase(TS,IS,XS,YS, 0);
+  [TS,IS,XS,YS,pars] = nmr_get_data(t1,t2, 'sweeps', 1,...
+    'sweep_max_r', 0.09,...
+    'fix_drift', 'pairs', 'fix_phase', 'separate',...
+    'get_grad', 1, 'get_quad', 1, 'get_helm', 1, 'get_freq', 1);
 
   find_figure('nmr_plot_optquad'); clf; hold on;
 
-  plot_frame=(nargin >= 5 && length(Ip)==4 && length(Gp)==4);
-
-  freq = nmr_get_par('freq', T(1))/1000; % freq, kHz
-  grad = nmr_get_par('grad', T(1))*1000; % Igrad, mA
+  gg = pars.grad * 1e3;
+  qq = pars.quad * 1e3;
+  hh = pars.helm * 1e3;
+  freq = pars.freq(1);
 
   % find maximum of each curve
   for i=1:1:length(TS);
-    [am(i), nm(i)] = max(YS{i});
+    [xm(i), nm(i)] = max(abs(XS{i}));
+    [ym(i), nm(i)] = max(abs(YS{i}));
     im(i) = IS{i}(nm(i));
-    qq(i) = nmr_get_par('quad', TS{i}(1)) * 1000;
+    [i0(i) Q(i) a0(i) xl(i) xr(i)] = fit_res(IS{i}, YS{i}, 0.5);
   end
-  pp=polyfit(qq,im,1);
+  di = (xr-xl)*1e3;
+  plot_height=1;
 
-  plot_height=40;
 
+  f=fopen([t1 '.txt'],'w');
+
+  sh=0;
   for i=1:2:length(TS);
-    t = IS{i};
-    x = plot_height*XS{i}/max(abs(XS{i}));
-    y = plot_height*YS{i}/max(abs(YS{i}));
+    c = (IS{i} - i0(i))*1e3;
+    if (ym(i)<max(ym)/4) continue; end
+    x = plot_height*XS{i}/xm(i);
+    y = plot_height*YS{i}/ym(i);
+
+%    if (di(i) < 0.1)
+      fprintf(f, '%7.2f %7.2f %7.2f  %5.3f %.6f\n', gg(i), qq(i), hh(i), (xr(i)-xl(i))*1e3, i0(i))
+%    end
+
+%    if (round(gg(i))!=-6) continue; end
+
     qs = sprintf(' %3.0f', qq(i));
-    plot(t-im(i), x+qq(i), 'b-');
-    plot(t-im(i), y+qq(i), 'r-');
-    plot([t(1) t(end)]-im(i), qq(i)*[1 1], 'b--');
-    text(Ispan/2, qq(i), qs)
+    hs = sprintf(' %3.0f', hh(i));
+    gs = sprintf(' %3.0f', gg(i));
+    sh = sh + 0.1;
+%    plot(c, x+sh, 'b-');
+    plot(c, y+sh, 'r-');
+    plot([c(1) c(end)], sh*[1 1], 'b--');
+    text(c(end), sh, [gs ' ' qs ' ' hs])
+
+
   end
+  fclose(f);
+  
+  text(c(1), min(qq)-5, [t1 ' - ' t2 ', f: ' num2str(freq) ' kHz']);
 
-  text(-Ispan/2.2, min(qq)-5, [t1 ' - ' t2 ', f: ' num2str(freq) ' kHz, Ig: ' num2str(grad) ' mA']);
-
-  Ilim = Ispan*[-1 1]/2;
-  Qlim = [min(qq)-10 max(qq)+plot_height];
-  xlabel("Imain, A")
-  ylabel("Iquad, mA")
-  xlim(Ilim)
-  ylim(Qlim)
+%  Ilim = Ispan*[-1 1]/2;
+#  Qlim = [min(qq)-10 max(qq)+plot_height];
+  xlabel("dImain, mA")
+%  xlim(Ilim)
+#  ylim(Qlim)
 #  title('Field inhomogeneity and effect of gradient coil')
 end
