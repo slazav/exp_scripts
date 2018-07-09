@@ -380,7 +380,7 @@ function [T,I,X,Y, pars] = nmr_get_data(t1, t2, varargin)
     fprintf("Fix phase: %s\n", fix_phase);
   end
 
-  if (!strcmp(fix_phase, 'none'))
+  if (!strcmp(fix_phase, 'none') && length(T)>0)
     for i=1:length(T);
       # remove baseline and fix phase
       x1 = X{i}(1); x2 = X{i}(end);

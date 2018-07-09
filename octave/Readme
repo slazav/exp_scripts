@@ -1,0 +1,10 @@
+### Matlab/Octave scripts
+
+## Figures
+
+* Find figure with given name or create a new one (modified script from /rota/programs/matlab)
+`fig = find_figure(figname);`
+
+
+## Data access
+

@@ -2,7 +2,7 @@
 
 function nmr_plot_optquad(t1, t2)
 
-  [TS,IS,XS,YS,pars] = nmr_get_data(t1,t2, 'sweeps', 1,...
+  [TS,IS,XS,YS,pars] = nmr_get_data(t1,t2, 'verb', 1, 'sweeps', 1,...
     'sweep_max_r', 0.09,...
     'fix_drift', 'pairs', 'fix_phase', 'separate',...
     'get_grad', 1, 'get_quad', 1, 'get_helm', 1, 'get_freq', 1);
@@ -48,11 +48,11 @@ function nmr_plot_optquad(t1, t2)
     plot(c, y+sh, 'r-');
     plot([c(1) c(end)], sh*[1 1], 'b--');
     text(c(end), sh, [gs ' ' qs ' ' hs])
-
-
   end
   fclose(f);
-  
+
+fprintf("PH: %f\n", mean(pars.ph));
+
   text(c(1), min(qq)-5, [t1 ' - ' t2 ', f: ' num2str(freq) ' kHz']);
 
 %  Ilim = Ispan*[-1 1]/2;

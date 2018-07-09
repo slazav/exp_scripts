@@ -1,6 +1,7 @@
 # plot gradient measurements
 
 function nmr_plot_optgrad(t1, t2, Ispan, Ip, Gp)
+  graphics_toolkit("gnuplot")
 
   [TS,IS,XS,YS,pars] = nmr_get_data(t1,t2, 'verb', 1, 'sweeps', 1,...
     'fix_drift', 'pairs', 'fix_phase', 'separate',...
@@ -9,8 +10,11 @@ function nmr_plot_optgrad(t1, t2, Ispan, Ip, Gp)
   find_figure('nmr_plot_optgrad'); clf; hold on;
   plot_frame=(nargin >= 5 && length(Ip)==4 && length(Gp)==4);
 
-  main_meas = 405.886; % main coil, G/A (measured)
-  grad_calc = 31.4270; % grad coil, G/A/cm (calc)
+  main_meas  = 405.886; % main coil, G/A (measured)
+  grad_calc  = 31.43/2; % grad coil, G/A/cm (calc)
+  grad_const = -3.5e-3; % G/A
+  grad_opt   = -7.55; % mA
+
   cell_height = 0.9;   % cm
   kgrad = (grad_calc*cell_height/2)/main_meas;
 
@@ -26,7 +30,7 @@ function nmr_plot_optgrad(t1, t2, Ispan, Ip, Gp)
     plot([i1a i2a], [g1a g2a], 'b--');
     plot([i1b i2b], [g1b g2b], 'b--');
   else
-    # larmor current: maxmum of highest peak
+    # larmor current: maximum of highest peak
     am=[];
     for i=1:2:length(TS);
       [am(i), nm(i)] = max(YS{i});
@@ -48,21 +52,24 @@ function nmr_plot_optgrad(t1, t2, Ispan, Ip, Gp)
     if plot_frame;
       ia = i1a + (g-g1a)*k1;
       ib = i1b + (g-g1b)*k2;
+      ic = (ia+ib)/2;
       ya = interp1(x,y, ia);
       yb= interp1(x,y, ib);
+      yc= interp1(x,y, ic);
       plot(ia*[1 1], g+[0, ya], 'b-')
       plot(ib*[1 1], g+[0, yb], 'b-')
+      plot(ic*[1 1], g+[0, yc], 'b-')
     end
     gg(end+1) = g;
   end
 
   if plot_frame
-    k1=-3.5e-3;
-    plot(Iopt + 1e-3*(gg-Gopt)*(k1-kgrad/2), gg, 'r--')
-    plot(Iopt + 1e-3*(gg-Gopt)*(k1+kgrad/2), gg, 'r--')
+#    plot(Iopt + 1e-3*(gg-grad_opt)*(grad_const-kgrad), gg, 'r--')
+#    plot(Iopt + 1e-3*(gg-grad_opt)*(grad_const+kgrad), gg, 'r--')
+    plot(Iopt + 1e-3*(gg-grad_opt)*(grad_const), gg, 'b--')
   end
 
-  text(Iopt-Ispan/2.2, min(gg)-0.5, [t1 ' - ' t2 ', f: ' num2str(pars.freq(1)) ' kHz, Iq: ' num2str(pars.quad(1)*1e3) ' mA']);
+  text(Iopt-Ispan/2.2, min(gg)-0.5, [t1 ', f: ' num2str(pars.freq(1)) ' kHz, Iq: ' num2str(pars.quad(1)*1e3) ' mA']);
 
   ax1 = gca;
   ax1_pos = get(ax1, 'Position');
@@ -88,6 +95,9 @@ function nmr_plot_optgrad(t1, t2, Ispan, Ip, Gp)
   ylim(ax2, Glim)
   ylim(ax1, Glim)
 #  title('Field inhomogeneity and effect of gradient coil')
+#  print('-deps',[ num2str(date2unix(t1)) '_grad.eps', 'color'])
+
+  print('-dfig',[ num2str(date2unix(t1)) '_grad.fig'], '-color', '-textspecial')
 
   axes(ax1)
 end
