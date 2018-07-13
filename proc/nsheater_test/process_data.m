@@ -11,11 +11,14 @@ function process_data
   pkg load optim
 
   % resistance of heaters:
-  Rns=1230;
+  Rns=1056;
 
   % read cruostat data
   [tmixer_t tmixer_v] = textread('data/t_mixer.txt', '%f %f');
   [tns_t tns_v]         = textread('data/t_ns.txt', '%f %f');
+
+  % squid calibration
+  tns_v = tns_v/1.0841;
 
   % read heater data: date, time, set voltages for still, mixer,
   % measured voltages for still, mixer heaters.
@@ -23,7 +26,8 @@ function process_data
 
   % time shift (between computers, now should be 0)
   sh1=0;
-  sh2=360;
+  sh2=0;
+  sh2=400;
 
   % convert date and time to unix seconds
   t=[];
@@ -33,7 +37,7 @@ function process_data
   end
 
   % prepare plots
-  find_figure('delution'); clf;
+  find_figure('NS heating'); clf;
   h(1) = subplot(2,2,1); hold on;
   h(2) = subplot(2,2,2); hold on;
   h(3) = subplot(2,2,[3 4]); hold on;
@@ -82,13 +86,23 @@ function process_data
   # QN + Q0 = K * dT2
   # -> K=1/a, Q0 = b/a
   K  = 1/p1(1);
-  Q0 = p1(2)/p1(1);
+
+
+
+  #### fit smaller range near zero
+  ii=find(QN<1);
+  p2 = polyfit(QN(ii), dT2(ii)', 1);
+  Q0 = p2(2)/p2(1);
+
+  xx=[-Q0 max(QN(ii))];
+  plot(h(3), xx, polyval(p2, xx), "b-");
+
 
   L = 2.44e-8; # Lorentz number [W Ohm /K^2];
-
   fprintf( 'Q_ns = %f [uW]\n', Q0 );
   fprintf( 'K_hs = %f T [W/K]\n', K/1e6 );
-  fprintf( 'R_hs = %f/T [uOhm]\n', 1e6*L/(K/1e6) );
+  fprintf( 'R_hs = %f [uOhm]\n', 1e6*L/(K/1e6) );
+
 
 
 end

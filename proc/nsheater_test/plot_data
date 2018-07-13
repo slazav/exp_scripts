@@ -15,7 +15,7 @@ fit f2(x) "data/t_ms" using 2:3 via k2, c2
 set log x
 set log y
 plot [0.01:2] [0.01:2]\
- "data/t_ms" using 2:3 with lines,\
+ "data/t_ns" using 2:3 with lines,\
  f1(x) notitle,\
  x notitle
 
