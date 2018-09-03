@@ -1,9 +1,11 @@
-#!/bin/sh -efu
+#!/bin/sh -eu
 
 # convert eps+tex into full eps
 
 name=${1%.tex}
+out=${2:-full_${name}.eps}
 
+# create a temporary TEX wrapper for the image
 cat > tmp_fig.tex << EOF
 \documentclass[a4paper]{article}
 \usepackage{amssymb}
@@ -19,21 +21,12 @@ cat > tmp_fig.tex << EOF
 \end{document}
 EOF
 
+# run latex+dvips to build the full PDF image
 latex tmp_fig
-dvips -E tmp_fig -o full_${name}.eps
+dvips -E tmp_fig -o tmp_fig.pdf
 
-bb=$(gs -dNOPAUSE -dBATCH -q -sDEVICE=bbox full_${name}.eps 2>&1 | head -n1)
-bb=${bb#*: }
-x=''
-y=''
-for i in $bb; do
-  [ -z $x ] && x=$i || y=$i
-  [ -z $y ] || break
-done
-echo ">>> $x $y"
+# convert to eps
+eps2eps tmp_fig.pdf $out
 
-dvips -E tmp_fig -O -${x}pt,${y}pt -o full_${name}.eps
-
-
-
+# remove temporary files
 rm -f tmp_fig.*
