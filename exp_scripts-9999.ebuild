@@ -19,9 +19,6 @@ BDEPEND=""
 
 src_install() {
   dobin bin/*
-  dobin $(find exp -maxdepth 1 -type f -perm 755)
   insinto /usr/$(get_libdir)/octave/site/m
   doins octave/*
-  insinto /usr/$(get_libdir)/Exp
-  doins exp_tcl/*.tcl
 }

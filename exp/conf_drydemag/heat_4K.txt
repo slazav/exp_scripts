@@ -1,9 +1,0 @@
-name {4K plate}
-volt_dev    pst1
-resistance  68
-v_units     V
-p_units     W
-
-db_dev      db_exp
-db_val      drydemag_heater_4K
-mon_int     600
